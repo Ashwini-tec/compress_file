@@ -4,8 +4,10 @@ const User = require("../src/model/user");
 /***************** authenticate with token *********************************/
 const verifyUser = async (req, res, next) => {
     try {
+        const bearerToken = req.headers?.authorization?.split(" ");
+        const token = bearerToken[1];
         const decoded = jwt.verify(
-            req.headers.authorization,
+            token,
             process.env.JWT_SECRETE_KEY
 
         );

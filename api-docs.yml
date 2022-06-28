@@ -1,0 +1,316 @@
+openapi: 3.0.0
+info:
+  title: File Compress & Schedule Task
+  description: API for File Compress & Schedule Task
+  version: 1.0.0
+
+servers:
+  - url: "http://localhost:3080/api/"
+  - url: "http://167.172.220.75:3080/api"
+
+security:
+    - authorization: []
+
+tags:
+  - name: File
+    description: Endpoints to create and get File related data
+  - name: Logs
+    description: Endpoints to create and get Logs related data
+  - name: Delete_Folder
+    description: Endpoints to create and get Delete_Folder related data
+  - name: Login
+    description: Endpoints to login into system
+
+paths:
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Login into system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/login"
+      responses:
+        200:
+          description: OK
+
+  /file/upload:
+    post:
+      tags:
+        - File
+      summary: Uploads a file.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+
+
+
+  /file/createSchedule:
+    post:
+      tags:
+        - File
+      summary: create file compress schedule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/schedule"
+      responses:
+        200:
+          description: OK
+
+  /file/approve/{:id}:
+    post:
+      tags:
+        - File
+      summary: schedule approve by admin only
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
+  /file/notApproved:
+    get:
+      tags:
+        - File
+      summary: to check not approved data till date
+      responses:
+        200:
+          description: OK
+
+  /file/expired:
+    get:
+      tags:
+        - File
+      summary: to check not approved expired file
+      responses:
+        200:
+          description: OK
+
+  /file/download/{:id}:
+    get:
+      tags:
+        - File
+      summary: download or get file path
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+        - in: query
+          name: download
+          schema:
+            type: boolean
+          description: download if it is true else send file path
+      responses:
+        200:
+          description: OK
+
+  /file/fileSchedule/{:id}:
+    get:
+      tags:
+        - File
+      summary: get file schedule by id
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
+  /file/updateSchedule/{:id}:
+    put:
+      tags:
+        - File
+      summary: update file schedule by id
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateSchedule"
+      responses:
+        200:
+          description: OK
+
+
+  /realtime/compress:
+    get:
+      tags:
+        - File
+      summary: real time compress file
+      parameters:
+        - in: query
+          name: download
+          schema:
+            type: boolean
+          description: download if it is true else send file path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reaTimeCompress"
+      responses:
+        200:
+          description: OK
+
+  /file/approvedSchedule:
+    get:
+      tags:
+        - File
+      summary: get all approved data
+      responses:
+        200:
+          description: OK
+
+  /successProcesses:
+    get:
+      tags:
+        - Logs
+      summary: get all success log files data
+      responses:
+        200:
+          description: OK
+
+  /successProcess/{:id}:
+    get:
+      tags:
+        - Logs
+      summary: get by id success log files data
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
+  /failedProcesses:
+    get:
+      tags:
+        - Logs
+      summary: get all fail log files data
+      responses:
+        200:
+          description: OK
+
+  /failedProcess/{:id}:
+    get:
+      tags:
+        - Logs
+      summary: get by id fail log files data
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
+  /delete:
+    delete:
+      tags:
+        - Delete_Folder
+      summary: delete or clean folders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deleteFolders"
+      responses:
+        200:
+          description: OK
+
+
+components:
+  securitySchemes:
+    authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    uploadFile:
+      type: file
+      required:
+        - pdf
+      properties:
+        pdf:
+          type: file
+
+    schedule:
+      type: object
+      required:
+        - processName
+        - date
+        - toLocation
+        - dipValue
+        - fromLocation
+      properties:
+        processName:
+          type: string
+        date:
+          type: number
+        toLocation:
+          type: string
+        dipValue:
+          type: number
+        fromLocation:
+          type: string
+
+    updateSchedule:
+      type: object
+      required:
+        - date
+      properties:
+        date:
+          type: number
+
+    reaTimeCompress:
+      type: object
+      required:
+        - fileName
+        - quality
+      properties:
+        fileName:
+          type: string
+        quality:
+          type: number
+
+    login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    deleteFolders:
+      type: object
+      properties:
+        filePath:
+          type: array
+          items:
+            type: string

@@ -110,7 +110,7 @@ router.delete(
 
 /***************** real time compress ********* */
 router.post(
-    "/realtime/copmress",
+    "/realtime/compress",
     validationMiddleware(validateParams.realTimeCompress()),
     controller.realtimeCompress
 );

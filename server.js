@@ -11,6 +11,8 @@ const app = express();
 require("dotenv").config();
 require("./config/db");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 
 global.__basedir = __dirname;
 const corsOptions = {
@@ -19,6 +21,12 @@ const corsOptions = {
     preflightContinue: false,
     optionsSuccessStatus: 204
 };
+
+app.use(
+    "/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(YAML.load(__dirname + "/api-docs.yml"))
+);
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
