@@ -8,7 +8,7 @@ const FailedProcess = require("../src/model/errorFileCompressFile");
 require("dotenv").config();
 
 /****************** check scheduled task in every 6 hrs ******** */
-nodeCron.schedule("0 */6 * * *", async() => {
+nodeCron.schedule("* * * * *", async() => {
     // console.log(new Date().toLocaleString());
     try {
         const date =  Date.now();
@@ -76,7 +76,9 @@ const compress = async(data, toLocation, dpiValue) => {
             const fromPath = path.join(dir, `${data.fromLocation}/` + originalFile );
             const toPath = path.join(dir, `${process.env.ERROR_LOCATION}/` + originalFile );
             const errorStatus = await fs.copy(fromPath, toPath ,(err) => {
-                console.log(">>>>>>> file copy error : ", err.message);
+                if(err){
+                    console.log(">>>>>>> file copy error : ", err.message);
+                }
             });
             console.log("error status : ", errorStatus, "db created : ",failedData);
         } else {

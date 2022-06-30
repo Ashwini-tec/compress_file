@@ -8,7 +8,7 @@ const { MESSAGE } = require("../utils/constant");
     try {
         const password = bcrypt.hashSync(process.env.PASSWORD, 10);
         const data = {
-            email : process.env.USER,
+            email : process.env.EMAIL_USER,
             password : password,
             role : "admin",
             name: "Admin",

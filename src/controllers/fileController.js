@@ -246,7 +246,7 @@ const compress = async(data, toLocation, dpiValue) => {
     const compressLocation = toLocation;
     const originalFile = data.fileName;
     let stats = fs.statSync(path.join(dir, `${sourceLocation}/` + originalFile));
-    console.log("originalsize: ",stats.size);
+    console.log("originalsize: ",stats.size, sourceLocation, compressLocation);
     const compactedFile = getCompactedFileName(originalFile);
     // const resolution = data.resolution;
     const quality = dpiValue;
@@ -273,7 +273,9 @@ const compress = async(data, toLocation, dpiValue) => {
             const fromPath = path.join(dir, `${data.fromLocation}/` + originalFile );
             const toPath = path.join(dir, `${process.env.ERROR_LOCATION}/` + originalFile );
             const errorStatus = await fs.copy(fromPath, toPath ,(err) => {
-                console.log(">>>>>>> file copy error : ", err.message);
+                if(err){
+                    console.log(">>>>>>> file copy error : ", err.message);
+                }
             });
             console.log("error status : ", errorStatus, "db created : ",failedData);
         } else {
