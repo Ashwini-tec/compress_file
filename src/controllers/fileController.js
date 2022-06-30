@@ -160,10 +160,10 @@ const downloadAFile = async(req, res) => {
                 }
             });
         }
-
+        const host = req.get("host");
         return res.status(200).send({
             Message: MESSAGE.SEND_STATUS,
-            data: `${directoryPath}/${result.toLocation}/${result.fileName}`
+            data: path.join(`${host}/file/`, `${result?.fileName}`),
         });
     } catch (error) {
         return res.status(500).send({ data: error.message });
@@ -218,8 +218,10 @@ const realtimeCompress = async(req, res) => {
         };
         await compress(info, process.env.DESTINATION, req.body.quality);
         setTimeout(() => {
+            const host = req.get("host");
             const fileName = getCompactedFileName(req.body.fileName);
-            const downloadPath = path.join(global.__basedir, `${process.env.DESTINATION}/${fileName}`);
+            // const downloadPath = path.join(`${host}/${global.__basedir}`, `${process.env.DESTINATION}/${fileName}`);
+            const downloadPath = path.join(`${host}/file/`, `${fileName}`);
             if(req.query.download === "true"){
                 const directoryPath = global.__basedir ;
                 const data = `${directoryPath}/${process.env.DESTINATION}/${fileName}`;
