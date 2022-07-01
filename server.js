@@ -1,5 +1,6 @@
 const bodyParser = require("body-parser");
 const express = require("express");
+const ampCors = require("@ampproject/toolbox-cors");
 const fileRoutes = require("./src/routes/fileRoutes");
 const loginRoutes = require("./src/routes/loginRoutes");
 const failedCompressorRoutes =  require("./src/routes/failedFileLogsRoutes");
@@ -22,7 +23,7 @@ const corsOptions = {
     preflightContinue: false,
     optionsSuccessStatus: 204
 };
-
+app.use(ampCors());
 app.use(express.static("public"));
 app.use(
     "/docs",
@@ -33,7 +34,16 @@ app.use(
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
-
+app.use(function (req, res, next) {
+    //  let origin = req.header("origin").toLowerCase()
+    // res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD, PUT");
+    res.set("Access-Control-Allow-Credentials", "true");
+    res.set("AMP-Access-Control-Allow-Source-Origin","keymouseitashwini@gmail.com");
+    res.set("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin");
+    next();
+});
 /***************** routes *********************/
 app.use("/file", express.static("compressLocation"));
 app.use("/api", fileRoutes);
