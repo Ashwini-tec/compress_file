@@ -46,6 +46,7 @@ app.use(function (req, res, next) {
 });
 /***************** routes *********************/
 app.use("/file", express.static("compressLocation"));
+app.use("/errorFile", express.static("errorLocation"));
 app.use("/api", fileRoutes);
 app.use("/api", loginRoutes);
 app.use("/api", failedCompressorRoutes);
