@@ -218,11 +218,15 @@ const realtimeCompress = async(req, res) => {
             fromLocation: process.env.SOURCE,
             processName: "RealTime Compress"
         };
-        await compress(info, process.env.DESTINATION, req.body.quality);
+        const responseData  = await compress(info, process.env.DESTINATION, req.body.quality);
+        if(!responseData){
+            return res.status(400).send({ data: MESSAGE.ERROR_COMPRESS});
+        }
         setTimeout(() => {
             const protocol = req.protocol;
             const host =  req.headers.host;
-            const fileName = getCompactedFileName(req.body.fileName);
+            let fileName = getCompactedFileName(req.body.fileName);
+            fileName = fileName.replace(/ +/g, "_");
             // const downloadPath = path.join(`${host}/${global.__basedir}`, `${process.env.DESTINATION}/${fileName}`);
             const urlPath = process.env.BASE_PATH_URL ?? `${protocol}://${host}`;
             const downloadPath = path.join( `${urlPath}/file/`, `${fileName}`);
@@ -250,10 +254,12 @@ const compress = async(data, toLocation, dpiValue) => {
     const sh = "./shrinkpdf.sh";
     const sourceLocation = data.fromLocation;
     const compressLocation = toLocation;
-    const originalFile = data.fileName;
+    let originalFile = data.fileName;
+    originalFile =  originalFile.replace(/ +/g, "_");
     let stats = fs.statSync(path.join(dir, `${sourceLocation}/` + originalFile));
     console.log("originalsize: ",stats.size, sourceLocation, compressLocation);
-    const compactedFile = getCompactedFileName(originalFile);
+    let compactedFile = getCompactedFileName(originalFile);
+    compactedFile = compactedFile.replace(/ +/g, "_");
     // const resolution = data.resolution;
     const quality = dpiValue;
     var command = `${sh} ${sourceLocation}/${originalFile} ${compressLocation}/${compactedFile}`;
@@ -265,38 +271,50 @@ const compress = async(data, toLocation, dpiValue) => {
 
     }
     console.log("command : ",command);
-    exec(command, async (err) => {  //execute
-        if (err) {
-            console.log("Error: Compacting error", err);
-            const errorLog = {
-                processName: data.processName,
-                fromLocation: data.fromLocation,
-                toLocation: toLocation,
-                fileName: originalFile,
-                date: Date.now(),
-            };
-            const failedData = await FailedProcess.create(errorLog);
-            const fromPath = path.join(dir, `${data.fromLocation}/` + originalFile );
-            const toPath = path.join(dir, `${process.env.ERROR_LOCATION}/` + originalFile );
-            const errorStatus = await fs.copy(fromPath, toPath ,(err) => {
-                if(err){
-                    console.log(">>>>>>> file copy error : ", err.message);
-                }
-            });
-            console.log("error status : ", errorStatus, "db created : ",failedData);
-        } else {
-            const successLog = {
-                processName: data.processName,
-                fromLocation: data.fromLocation,
-                toLocation: toLocation,
-                fileName: compactedFile,
-                date: Date.now(),
-            };
-            const successData = await SuccessProcess.create(successLog);
-            let statsCompress = await fs.statSync(path.join(dir, `${compressLocation}/` + compactedFile));
-            console.log("Compacting successfully",statsCompress, "db created : ",successData);
-            console.log(statsCompress.size);
-        }
+    const ttt  = new Promise((resolve, reject)=> {
+        exec(command, async (err) => {  //execute
+            if (err) {
+                console.log("Error: Compacting error", err);
+                const errorLog = {
+                    processName: data.processName,
+                    fromLocation: data.fromLocation,
+                    toLocation: toLocation,
+                    fileName: originalFile,
+                    date: Date.now(),
+                };
+                const failedData = await FailedProcess.create(errorLog);
+                const fromPath = path.join(dir, `${data.fromLocation}/` + originalFile );
+                const toPath = path.join(dir, `${process.env.ERROR_LOCATION}/` + originalFile );
+                const errorStatus = await fs.copy(fromPath, toPath ,(err) => {
+                    if(err){
+                        console.log(">>>>>>> file copy error : ", err.message);
+                    }
+                });
+                console.log("error status : ", errorStatus, "db created : ",failedData);
+                return reject(err.message);
+            } else {
+                const successLog = {
+                    processName: data.processName,
+                    fromLocation: data.fromLocation,
+                    toLocation: toLocation,
+                    fileName: compactedFile,
+                    date: Date.now(),
+                };
+                const successData = await SuccessProcess.create(successLog);
+                let statsCompress = await fs.statSync(path.join(dir, `${compressLocation}/` + compactedFile));
+                console.log("Compacting successfully",statsCompress, "db created : ",successData);
+                console.log(statsCompress.size);
+                return resolve(true);
+            }
+        });
+    });
+
+    return ttt.then(i => {
+        console.log(i);
+        return true;
+    }).catch(err =>{
+        console.log(err);
+        return false;
     });
 };
 

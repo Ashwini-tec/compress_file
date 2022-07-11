@@ -10,7 +10,8 @@ const MESSAGE = {
     LOGIN_MESSAGE: "Login Successfully",
     PERMISSION_NOT_GIVEN: "Not Allowed To Perform Task",
     USER_ALREADY_EXIST: "User Already Exist",
-    SUCCESS_MESSAGE_COMPRESS: "File Compressed SuccessFully"
+    SUCCESS_MESSAGE_COMPRESS: "File Compressed SuccessFully",
+    ERROR_COMPRESS: "Error occured file compress failed please check error file log"
 };
 
 module.exports = { MESSAGE };

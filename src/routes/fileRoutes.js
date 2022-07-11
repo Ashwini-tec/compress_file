@@ -11,6 +11,7 @@ const storage = multer.diskStorage(
     {
         destination: `./${process.env.SOURCE}`,
         filename: function ( req, file, cb ) {
+            file.originalname = file.originalname.replace(/ +/g, "_");
             cb( null, file.originalname);
         }
     }
