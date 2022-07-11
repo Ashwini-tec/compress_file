@@ -27,7 +27,7 @@ const createSchedule = async(req, res)=>{
             fromLocation: req.body.fromLocation,
             toLocation: req.body.toLocation,
             processName: req.body.processName,
-            date: req.body.date,
+            date: req.body.date + 3600000*12,
             dipValue: req.body.dipValue,
         };
         const result = await BatchProcess.create(data);
@@ -162,9 +162,10 @@ const downloadAFile = async(req, res) => {
         }
         const protocol = req.protocol;
         const host = req.headers.host;
+        const urlPath = process.env.BASE_PATH_URL ?? `${protocol}://${host}`;
         return res.status(200).send({
             Message: MESSAGE.SEND_STATUS,
-            data: path.join(`${protocol}://${host}/file/`, `${result?.fileName}`),
+            data: path.join(`${urlPath}/file/`, `${result?.fileName}`),
         });
     } catch (error) {
         return res.status(500).send({ data: error.message });
@@ -223,7 +224,8 @@ const realtimeCompress = async(req, res) => {
             const host =  req.headers.host;
             const fileName = getCompactedFileName(req.body.fileName);
             // const downloadPath = path.join(`${host}/${global.__basedir}`, `${process.env.DESTINATION}/${fileName}`);
-            const downloadPath = path.join(`${protocol}://${host}/file/`, `${fileName}`);
+            const urlPath = process.env.BASE_PATH_URL ?? `${protocol}://${host}`;
+            const downloadPath = path.join( `${urlPath}/file/`, `${fileName}`);
             if(req.query.download === "true"){
                 const directoryPath = global.__basedir ;
                 const data = `${directoryPath}/${process.env.DESTINATION}/${fileName}`;

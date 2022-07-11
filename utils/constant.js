@@ -1,5 +1,6 @@
 const MESSAGE = {
-    SUCCESS_MESSAGE: "File Coppied SuccessFully",
+    EXTENTION: ".pdf",
+    SUCCESS_MESSAGE: "File Compressed SuccessFully",
     DATA_NOT_FOUND: "Data Not Found",
     FILE_DOWNLOAD_SUCCESSFULLY: "File Downloaded Successfully",
     GET_FILE_SUCCESSFULLY: "Fetch All File Successfully",

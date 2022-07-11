@@ -20,6 +20,8 @@ tags:
     description: Endpoints to create and get Delete_Folder related data
   - name: Login
     description: Endpoints to login into system
+  - name: CompressQueue
+    description: Endpoints to login into system
 
 paths:
   /login:
@@ -51,7 +53,41 @@ paths:
                   type: string
                   format: binary
 
+  /file/copmpressQueue:
+    post:
+      tags:
+        - CompressQueue
+      summary: create file compress queue
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/compressQueue"
+      responses:
+        200:
+          description: OK
 
+    get:
+      tags:
+        - CompressQueue
+      summary: get all file compress queue
+      responses:
+        200:
+          description: OK
+
+  /file/copmpressQueue/{:id}:
+    get:
+      tags:
+        - CompressQueue
+      summary: getby id file compress queue
+      parameters:
+        - in: path
+          name: :id
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
 
   /file/createSchedule:
     post:
@@ -153,7 +189,7 @@ paths:
 
 
   /realtime/compress:
-    get:
+    post:
       tags:
         - File
       summary: real time compress file
@@ -314,3 +350,17 @@ components:
           type: array
           items:
             type: string
+
+    compressQueue:
+      type: object
+      required:
+        - toLocation
+        - dipValue
+        - fromLocation
+      properties:
+        toLocation:
+          type: string
+        dipValue:
+          type: number
+        fromLocation:
+          type: string
