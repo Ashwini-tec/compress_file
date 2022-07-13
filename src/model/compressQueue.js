@@ -1,6 +1,14 @@
 const mongoose = require("mongoose");
 
 const fileCompressQueueSchema = new mongoose.Schema({
+    sourceLocation:{
+        type:String,
+        required: true,
+    },
+    toLocation:{
+        type:String,
+        required: true,
+    },
     filelog: {
         from:{
             type: Array,

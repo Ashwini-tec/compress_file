@@ -84,6 +84,8 @@ const createQueue = async(req, res)=>{
             await compress(path, toLocation,req.body.dipValue);
         }
         const data = {
+            sourceLocation: req.body.sourceLocation,
+            toLocation: req.body.toLocation,
             filelog:{
                 from: formFileLocation,
                 to: locationToCopy,
@@ -100,6 +102,8 @@ const createQueue = async(req, res)=>{
             _id: id,
             createdAt: dbResult.createdAt,
             updatedAt: dbResult.updatedAt,
+            sourceLocation: req.body.sourceLocation,
+            toLocation: req.body.toLocation,
         });
     } catch (error) {
         return res.status(500).send({ data: error.message });

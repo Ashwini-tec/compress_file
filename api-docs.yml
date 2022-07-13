@@ -356,11 +356,11 @@ components:
       required:
         - toLocation
         - dipValue
-        - fromLocation
+        - sourceLocation
       properties:
         toLocation:
           type: string
         dipValue:
           type: number
-        fromLocation:
+        sourceLocation:
           type: string
