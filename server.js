@@ -8,6 +8,8 @@ const successCompressorRoutes = require("./src/routes/successFileLogsRoutes");
 const infoRoutes = require("./src/routes/infoRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const copmpressQueue = require("./src/routes/compressQueueRoutes");
+const formDetailRoutes = require("./src/routes/formDataRoutes");
+
 require("./utils/middleware");
 require("./utils/demoUser");
 const app = express();
@@ -55,6 +57,7 @@ app.use("/api", successCompressorRoutes);
 app.use("/api", userRoutes);
 app.use("/api", infoRoutes);
 app.use("/api", copmpressQueue);
+app.use("/api", formDetailRoutes);
 
 const port = process.env.PORT || 8000;
 app.listen(port,()=> { console.log(`server is running on port ${port} ....` );});
