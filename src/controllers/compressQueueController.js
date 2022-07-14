@@ -201,10 +201,40 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
     return arrayOfFiles;
 };
 
+/************** report count in betwwen date range ********* */
+const getReportCount =async(req, res) =>{
+    try {
+        const fromdate = req.body.fromDate;
+        const toDate = req.body.toDate;
+        const query = {
+            date: { $gte: fromdate, $lte: toDate },
+        };
+        const successDbData = await SuccessProcess.find(query);
+        const failedDbData = await FailedProcess.find(query);
 
+        /************* if success detail is true the return details of db data ******** */
+        if(req.query.successDetail === "true"){
+            return res.status(200).json({ data: successDbData });
+        }
+        /************* if failed detail is true the return details of db data ******** */
+        if(req.query.failedDetail === "true"){
+            return res.status(200).json({ data: failedDbData });
+        }
+        /*********** if nothing in a query return count of files ************ */
+        const result = {
+            successCount : successDbData.length,
+            failCount: failedDbData.length,
+        };
+
+        return res.status(200).json({ data: result });
+    } catch (error) {
+        return res.status(500).send({ data: error.message });
+    }
+};
 
 module.exports = {
     createQueue,
     getById,
     getAll,
+    getReportCount,
 };

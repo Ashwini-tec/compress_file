@@ -277,6 +277,30 @@ paths:
         200:
           description: OK
 
+  /file/report:
+    post:
+      tags:
+        - Report
+      summary: get all the success and failed count and there detail
+      parameters:
+        - in: query
+          name: successDetail
+          schema:
+            type: boolean
+          description: if true then show the details
+        - in: query
+          name: failedDetail
+          schema:
+            type: boolean
+          description: if true then show the details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reportDeatil"
+      responses:
+        200:
+          description: OK
 
 components:
   securitySchemes:
@@ -364,3 +388,14 @@ components:
           type: number
         sourceLocation:
           type: string
+
+    reportDeatil:
+      type: object
+      required:
+        - fromDate
+        - toDate
+      properties:
+        fromDate:
+          type: number
+        toDate:
+          type: number

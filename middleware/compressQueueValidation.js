@@ -17,4 +17,11 @@ module.exports = {
             toLocation: Joi.string().required(),
         });
     },
+
+    report : () =>{
+        return Joi.object({
+            fromDate: Joi.number().required(),
+            toDate: Joi.number().required(),
+        });
+    }
 };

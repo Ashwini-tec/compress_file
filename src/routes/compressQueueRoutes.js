@@ -27,4 +27,12 @@ router.get(
     controller.getById
 );
 
+/********** get report in between range  ******** */
+router.post(
+    "/file/report",
+    authenticate,
+    validationMiddleware(validateParams.report()),
+    controller.getReportCount
+);
+
 module.exports = router;
